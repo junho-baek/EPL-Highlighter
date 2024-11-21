@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.pulsating-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 300px;
+  height: 300px;
+
+  &:before {
+    content: "";
+    position: relative;
+    display: block;
+    width: 300%;
+    height: 300%;
+    box-sizing: border-box;
+    margin-left: -100%;
+    margin-top: -100%;
+    border-radius: 500px;
+    animation: pulse-ring 1.25s cubic-bezier(0.36, 0.11, 0.89, 0.32) infinite;
+  }
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    width: 140%;
+    height: 260%;
+    margin-left: -20%;
+    margin-top: -55%;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(92, 62, 62, 0.8);
+    animation: pulse-dot 1.25s cubic-bezier(0.455, 0.03, 0.515, 0.955) -0.4s infinite;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.33);
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.9);
+  }
+}
+
+@layer base {
+  .font-outline-2 {
+    -webkit-text-stroke: 2px rgba(45, 212, 191, 0.3);
+  }
+  .font-outline-4 {
+    -webkit-text-stroke: 4px rgba(45, 212, 191, 0.3);
+  }
+}

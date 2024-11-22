@@ -4,20 +4,27 @@ import { reactions } from "../mockData";
 import Layout from "../components/Layout";
 
 const PageTitle = tw.h1`
-  text-4xl font-bold text-teal-600 mb-6
+  text-4xl font-bold text-blue-600 mb-6
 `;
 
 const ReactionContainer = tw.div`
-  flex flex-col gap-6 items-center
+  flex flex-col gap-6 items-center w-full max-w-7xl mx-auto p-4
+  lg:flex-row lg:items-start lg:justify-center
 `;
 
 const ReactionList = tw.ul`
-  w-full max-w-lg bg-white rounded-lg shadow-md p-4 border-2 border-teal-200
+  w-full max-w-lg rounded-lg shadow-md p-4 border-2
+  ${(p) =>
+    p.$isDark ? "bg-gray-800 border-gray-700" : "bg-white border-blue-200"}
+  lg:flex-1
 `;
 
 const ChatMessages = tw.div`
-  w-full max-w-lg bg-gray-100 rounded-lg shadow-md p-4 border-2 border-teal-200
+  w-full max-w-lg rounded-lg shadow-md p-4 border-2
   h-64 overflow-y-auto
+  ${(p) =>
+    p.$isDark ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-blue-200"}
+  lg:flex-1 lg:h-[500px]
 `;
 
 function Live() {

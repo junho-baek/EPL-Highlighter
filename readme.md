@@ -104,3 +104,5 @@ uvicorn main:app --reload
 - **Version Control**: Git, GitHub
 
 ---
+
+python -m ipykernel install --user --name=your_env_name

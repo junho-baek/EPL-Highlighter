@@ -8,8 +8,9 @@ verify_ssl = true
 [packages]
 fastapi = "*"
 uvicorn = "*"
-selenium = "*"
+selenium = "4.17.2"
 pydantic = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.9"

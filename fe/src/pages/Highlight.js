@@ -4,7 +4,7 @@ import { highlights } from "../mockData";
 import Layout from "../components/Layout";
 
 const PageTitle = tw.h1`
-  text-4xl font-bold text-teal-600 mb-6
+  text-4xl font-bold text-blue-600 mb-6
 `;
 
 const HighlightContainer = tw.div`
@@ -12,7 +12,7 @@ const HighlightContainer = tw.div`
 `;
 
 const HighlightCard = tw.div`
-  w-full max-w-lg bg-white rounded-lg shadow-md p-4 border-2 border-teal-200
+  w-full max-w-lg bg-white rounded-lg shadow-md p-4 border-2 border-blue-200
 `;
 
 function Highlight() {

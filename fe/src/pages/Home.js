@@ -4,18 +4,27 @@ import { matches } from "../mockData";
 import Layout from "../components/Layout";
 
 const PageTitle = tw.h1`
-  text-4xl font-bold text-teal-600 mb-6
+  text-4xl font-bold text-blue-600 mb-6
 `;
 
 const MatchListContainer = tw.div`
   flex flex-col gap-4 items-center
+  px-4 w-full max-w-7xl mx-auto
+  md:grid md:grid-cols-2 lg:grid-cols-3
+  md:gap-6 md:px-6
 `;
 
 const MatchButton = tw.button`
-  w-full max-w-xl p-4 bg-teal-200 rounded-lg shadow-md text-lg font-semibold
-  border-2 border-teal-400 transition duration-300 ease-in-out
-  hover:bg-teal-300 hover:scale-105
-  disabled:bg-gray-200 disabled:cursor-not-allowed disabled:border-gray-300
+  w-full p-4 rounded-lg shadow-md text-lg font-semibold
+  transition duration-300 ease-in-out
+  ${(p) =>
+    p.$isDark
+      ? `bg-gray-800 text-white border-2 border-gray-700
+       hover:bg-gray-700 hover:scale-105`
+      : `bg-blue-200 text-gray-800 border-2 border-blue-400
+       hover:bg-blue-300 hover:scale-105`}
+  disabled:opacity-50 disabled:cursor-not-allowed
+  md:min-h-[200px] md:flex md:flex-col md:justify-between
 `;
 
 const ToggleButton = tw.button`
@@ -23,7 +32,7 @@ const ToggleButton = tw.button`
   transition duration-300 ease-in-out
   ${(props) =>
     props.$isActive
-      ? "bg-teal-500 text-white"
+      ? "bg-blue-500 text-white"
       : "bg-gray-200 text-gray-800 hover:bg-gray-300"}
 `;
 

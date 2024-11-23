@@ -9,7 +9,26 @@ import time
 import json
 from datetime import datetime
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException
+import os
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 서버 시작시 data 디렉토리 확인 및 생성
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    
+    # EPL 스케줄 데이터 확인
+    try:
+        with open('data/epl_schedule.json', 'r'):
+            pass
+    except FileNotFoundError:
+        await update_schedule('epl')
+        
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 # CORS 설정 추가
 app.add_middleware(
@@ -98,7 +117,7 @@ async def update_schedule(category: str):
         matches = crawl_schedule(category)
         
         # JSON 파일로 저장
-        filename = f"schedules_{category}_{datetime.now().strftime('%Y%m%d')}.json"
+        filename = f"data/{category.lower()}_schedule.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump({"matches": matches}, f, ensure_ascii=False, indent=2)
             
@@ -109,7 +128,7 @@ async def update_schedule(category: str):
 @app.get("/schedules/{category}")
 async def get_schedules(category: str):
     try:
-        filename = f"schedules_{category}_{datetime.now().strftime('%Y%m%d')}.json"
+        filename = f"data/{category.lower()}_schedule.json"
         with open(filename, 'r', encoding='utf-8') as f:
             schedules = json.load(f)
         return schedules

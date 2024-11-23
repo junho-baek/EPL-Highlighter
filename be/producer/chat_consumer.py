@@ -9,6 +9,10 @@ TOPIC = 'test-topic'
 
 
 def consume_chat(broker_host: str, topic: str):
+    """
+    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
+    :param topic: 카프카 토픽
+    """
     # Kafka Consumer 생성
     consumer = KafkaConsumer(
         topic,

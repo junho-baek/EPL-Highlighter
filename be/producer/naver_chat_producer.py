@@ -16,6 +16,12 @@ from ChatModel import ChatModel
 
 
 def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topic: str):
+    """
+    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
+    :param topic: 카프카 토픽
+    :param page_id: 네이버 페이지 아이디 (https://m.sports.naver.com/game/{page_id}/cheer)
+    :param expire_datetime: 클롤링을 중단할 시각
+    """
     producer = KafkaProducer(
         bootstrap_servers=broker_host,
         value_serializer=lambda chat_model: json.dumps(dataclasses.asdict(chat_model)).encode('utf-8')
@@ -45,6 +51,9 @@ def get_web_driver() -> WebDriver:
 
 
 def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None, None]:
+    """
+    :param page_id: 네이버 페이지 아이디 (https://m.sports.naver.com/game/{page_id}/cheer)
+    """
     # 페이지 로드
     url = f"https://m.sports.naver.com/game/{page_id}/cheer"
     driver.get(url)

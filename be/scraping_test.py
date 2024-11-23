@@ -51,12 +51,11 @@ def get_web_driver() -> WebDriver:
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     return webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()),
-        options=options
+        service=ChromeService(ChromeDriverManager().install()), options=options
     )
 
 
-def crawl_schedule(driver: WebDriver, target_date: date, category='epl'):
+def crawl_schedule(driver: WebDriver, target_date: date, category="epl"):
     date_str: str = target_date.strftime("%Y-%m-%d")
     url = f"https://m.sports.naver.com/wfootball/schedule/index?category={category}&date={date_str}"
     # get page
@@ -69,7 +68,9 @@ def crawl_schedule(driver: WebDriver, target_date: date, category='epl'):
 
     # parse page
     elements = driver.find_elements(By.CSS_SELECTOR, ".ScheduleLeagueType_title__2Kalm")
-    match_elements = driver.find_elements(By.CSS_SELECTOR, ".ScheduleLeagueType_match_list__1-n6x")
+    match_elements = driver.find_elements(
+        By.CSS_SELECTOR, ".ScheduleLeagueType_match_list__1-n6x"
+    )
 
     for date_element, match_element in zip(elements, match_elements):
         print(f"\n[{date_element.text}] 경기일정:")  # 날짜 출력
@@ -79,9 +80,13 @@ def crawl_schedule(driver: WebDriver, target_date: date, category='epl'):
             match_time = li.find_element(By.CSS_SELECTOR, ".MatchBox_time__nIEfd")
             match_status = li.find_element(By.CSS_SELECTOR, ".MatchBox_status__2pbzi")
             match_area = li.find_element(By.CSS_SELECTOR, ".MatchBox_match_area__39dEr")
-            match_areas = match_area.find_elements(By.CSS_SELECTOR, ".MatchBoxTeamArea_team__3aB4O")
+            match_areas = match_area.find_elements(
+                By.CSS_SELECTOR, ".MatchBoxTeamArea_team__3aB4O"
+            )
             link = match_area.find_element(By.CSS_SELECTOR, "a").get_attribute("href")
-            actual_time = match_time.get_attribute("textContent").strip().split("\n")[-1][-5:]
+            actual_time = (
+                match_time.get_attribute("textContent").strip().split("\n")[-1][-5:]
+            )
 
             print(f"경기날짜: {date_element.text}")
             print(f"경기 시간: {actual_time}")
@@ -91,18 +96,15 @@ def crawl_schedule(driver: WebDriver, target_date: date, category='epl'):
             print("-" * 50)
 
 
-
 def get_new_comments():
     def parse_comment(comment_element):
         """댓글 요소를 파싱하는 함수"""
         content = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_contents").text
         author = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_name").text
-        time_posted = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_date").get_attribute("data-value")
-        return {
-            "author": author,
-            "content": content,
-            "time": time_posted
-        }
+        time_posted = comment_element.find_element(
+            By.CSS_SELECTOR, ".u_cbox_date"
+        ).get_attribute("data-value")
+        return {"author": author, "content": content, "time": time_posted}
 
     # cbox_module
     # cbox_module

@@ -24,13 +24,17 @@ def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topi
     """
     producer = KafkaProducer(
         bootstrap_servers=broker_host,
-        value_serializer=lambda chat_model: json.dumps(dataclasses.asdict(chat_model)).encode('utf-8')
+        value_serializer=lambda chat_model: json.dumps(
+            dataclasses.asdict(chat_model)
+        ).encode("utf-8"),
     )
     for comment in crawl_comment(page_id, get_web_driver()):
         if expire_datetime < datetime.now():
             break
         producer.send(topic, value=comment)
-        print(f"Sent: [{comment.time}]-[{comment.author}]-[{comment.message}] to topic: {topic}")
+        print(
+            f"Sent: [{comment.time}]-[{comment.author}]-[{comment.message}] to topic: {topic}"
+        )
     producer.close()
 
 
@@ -38,15 +42,14 @@ def get_web_driver() -> WebDriver:
     user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
 
     options = Options()
-    options.add_argument('user-agent=' + user_agent)
+    options.add_argument("user-agent=" + user_agent)
     options.add_argument("--window-size=1600,1000")
     # options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     return webdriver.Chrome(
-        service=ChromeService(ChromeDriverManager().install()),
-        options=options
+        service=ChromeService(ChromeDriverManager().install()), options=options
     )
 
 
@@ -66,14 +69,14 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
     comments = driver.find_elements(By.CSS_SELECTOR, ".u_cbox_comment")
     for comment_element in comments:
         try:
-            content = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_contents").text
+            content = comment_element.find_element(
+                By.CSS_SELECTOR, ".u_cbox_contents"
+            ).text
             author = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_name").text
-            time_posted = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_date").get_attribute("data-value")
-            yield ChatModel(
-                time=time_posted,
-                message=content,
-                author=author
-            )
+            time_posted = comment_element.find_element(
+                By.CSS_SELECTOR, ".u_cbox_date"
+            ).get_attribute("data-value")
+            yield ChatModel(time=time_posted, message=content, author=author)
         except Exception as e:
             print(f"댓글 파싱 중 오류 발생: {str(e)}")
 
@@ -91,9 +94,9 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
                 for comment in new_comments:
                     print("\n새로운 댓글이 추가되었습니다!")
                     yield ChatModel(
-                        time=comment['time'],
-                        message=comment['content'],
-                        author=comment['author']
+                        time=comment["time"],
+                        message=comment["content"],
+                        author=comment["author"],
                     )
             time.sleep(1)  # CPU 사용량 감소를 위한 짧은 대기
         except Exception as e:
@@ -136,8 +139,9 @@ observer.observe(targetNode, config);
 """
 
 if __name__ == "__main__":
-    produce_chat("2024112463551271679",
-                 datetime.now() + timedelta(days=3),
-                 'localhost:19092',
-                 'epl'
-                 )
+    produce_chat(
+        "2024112463551271679",
+        datetime.now() + timedelta(days=3),
+        "localhost:19092",
+        "epl",
+    )

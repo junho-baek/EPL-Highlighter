@@ -11,6 +11,9 @@ uvicorn = "*"
 selenium = "4.17.2"
 pydantic = "*"
 jupyter = "*"
+webdriver-manager = "*"
+kafka-python = "*"
+pytchat = "*"
 
 [requires]
 python_version = "3.9"

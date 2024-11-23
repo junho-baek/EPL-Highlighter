@@ -11,6 +11,7 @@ uvicorn = "*"
 selenium = "4.17.2"
 pydantic = "*"
 jupyter = "*"
+webdriver-manager = "*"
 
 [requires]
 python_version = "3.9"

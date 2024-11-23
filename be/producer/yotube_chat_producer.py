@@ -1,0 +1,38 @@
+import dataclasses
+import json
+from datetime import datetime, timedelta
+
+import pytchat
+from kafka import KafkaProducer
+
+from ChatModel import ChatModel
+
+
+def produce_chat(video_id: str, expire_datetime: datetime, broker_host: str, topic: str):
+    producer = KafkaProducer(
+        bootstrap_servers=broker_host,
+        value_serializer=lambda chat_model: json.dumps(dataclasses.asdict(chat_model)).encode('utf-8')
+    )
+    chat_crawler = pytchat.create(video_id=video_id)
+
+    while chat_crawler.is_alive() and datetime.now() < expire_datetime:
+        for c in chat_crawler.get().sync_items():
+            chat: ChatModel = ChatModel(
+                time=c.datetime,
+                author=c.author.name,
+                message=c.message
+            )
+
+            producer.send(topic, value=chat)
+
+            print(f"Sent: [{c.datetime}]-[{c.author.name}]-[{c.message}] to topic: {topic}")
+    producer.close()
+
+
+if __name__ == "__main__":
+    produce_chat(
+        "FN-wSx3ryg0",
+        datetime.now() + timedelta(days=3),
+        'localhost:19092',
+        'epl'
+    )

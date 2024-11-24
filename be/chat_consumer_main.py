@@ -31,7 +31,7 @@ def consume_chat(broker_host: str, topic: str):
                 f"""Received: [{time}]-[{author}]-[{message}] from topic: {topic}"""
             )
 
-            db.chats.insert_one(chat)
+            db.chat.insert_one(chat)
 
     except KeyboardInterrupt:
         print("Consumer stopped.")

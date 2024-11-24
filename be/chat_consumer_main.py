@@ -1,5 +1,7 @@
 import json
 
+from common.model import ChatModel
+from common.mongodb.client import db
 from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaConsumer
 
@@ -22,11 +24,15 @@ def consume_chat(broker_host: str, topic: str):
     # 메시지 소비
     try:
         for record in consumer:
-            chat = record.value
+            chat: ChatModel = record.value
+            time, author, message = chat["time"], chat["author"], chat["message"]
+
             print(
-                f"""Sent: [{chat['time']}]-[{chat['author']
-                                             }]-[{chat['message']}] to topic: {topic}"""
+                f"""Received: [{time}]-[{author}]-[{message}] from topic: {topic}"""
             )
+
+            db.chats.insert_one(chat)
+
     except KeyboardInterrupt:
         print("Consumer stopped.")
     finally:

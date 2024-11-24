@@ -12,22 +12,26 @@ from common.model.chat_model import ChatModel
 TIME_INTERVAL_MINUTE = 5
 
 
-def get_interval_start_time() -> datetime:
-    now = datetime.now()
-    time = now.replace(second=0, microsecond=0)
-    time -= timedelta(minutes=now.minute % TIME_INTERVAL_MINUTE)
+def get_time_interval(time: datetime) -> tuple[datetime, datetime]:
+    interval_start_time = time.replace(second=0, microsecond=0)
+    interval_start_time -= timedelta(minutes=time.minute %
+                                     TIME_INTERVAL_MINUTE)
 
-    return time
+    interval_end_time = interval_start_time + \
+        timedelta(minutes=TIME_INTERVAL_MINUTE)
+
+    return interval_start_time, interval_end_time
 
 
 def process_statistic(chat: ChatModel):
-    time = get_interval_start_time()
-
-    source_id = chat["source_id"]
-    source_type = chat["source_type"]
+    source_id = chat.source_id
+    source_type = chat.source_type
+    interval_start_time = chat.interval_start_time
+    interval_end_time = chat.interval_end_time
 
     query = {
-        "time": time,
+        "interval_start_time": interval_start_time,
+        "interval_end_time": interval_end_time,
         "source_id": source_id,
         "source_type": source_type,
     }
@@ -35,7 +39,8 @@ def process_statistic(chat: ChatModel):
     chat_statistic = db.chat_statistic.find_one(query)
     if chat_statistic is None:
         chat_statistic = {
-            "time": time,
+            "interval_start_time": interval_start_time,
+            "interval_end_time": interval_end_time,
             "source_id": source_id,
             "source_type": source_type,
             "count": 0,
@@ -65,14 +70,27 @@ def consume_chat(broker_host: str, topic: str):
     try:
         for record in consumer:
             chat: ChatMessage = record.value
-            time, author, message = chat["time"], chat["author"], chat["message"]
+            time_str, author, message = chat["time"], chat["author"], chat["message"]
 
             print(
-                f"""Received: [{time}]-[{author}]-[{message}] from topic: {topic}"""
+                f"""Received: [{time_str}]-[{author}]-[{message}] from topic: {topic}"""
             )
 
-            db.chat.insert_one(chat)
-            process_statistic(chat)
+            time = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S%z")
+            (interval_start_time, interval_end_time) = get_time_interval(time)
+
+            chat_model = ChatModel(
+                source_id=chat["source_id"],
+                source_type=chat["source_type"],
+                time=time,
+                message=message,
+                author=author,
+                interval_start_time=interval_start_time,
+                interval_end_time=interval_end_time,
+            )
+
+            db.chat.insert_one(chat_model.__dict__)
+            process_statistic(chat_model)
 
     except KeyboardInterrupt:
         print("Consumer stopped.")

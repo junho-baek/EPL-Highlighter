@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   zookeeper:
@@ -22,7 +22,26 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker:9092, EXTERNAL://localhost:19092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
-
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 17017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: mymogopassword
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 18081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mymogopassword
+      ME_CONFIG_MONGODB_URL: mongodb://root:mymogopassword@mongo:27017/
+      ME_CONFIG_BASICAUTH: false

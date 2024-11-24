@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import multiprocessing
 import time
 from datetime import datetime, timedelta
 from typing import Generator
@@ -150,10 +151,29 @@ const observer = new MutationObserver(callback);
 observer.observe(targetNode, config);
 """
 
-if __name__ == "__main__":
-    produce_chat(
-        "2024112463551271679",
+
+def target1():
+    return produce_chat(
+        "20241124021F64",
         datetime.now() + timedelta(days=3),
         KAFKA_BROKER,
         EPL_TOPIC_NAME,
     )
+
+
+def target2():
+    return produce_chat(
+        "202411240450125",
+        datetime.now() + timedelta(days=3),
+        KAFKA_BROKER,
+        EPL_TOPIC_NAME,
+    )
+
+
+if __name__ == "__main__":
+
+    p1 = multiprocessing.Process(target=target1)
+    p1.start()
+
+    p2 = multiprocessing.Process(target=target2)
+    p2.start()

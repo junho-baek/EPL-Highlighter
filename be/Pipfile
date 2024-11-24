@@ -15,6 +15,7 @@ webdriver-manager = "*"
 kafka-python = "*"
 pytchat = "*"
 apscheduler = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.9"

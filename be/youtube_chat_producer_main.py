@@ -5,17 +5,17 @@ from datetime import datetime, timedelta
 import pytchat
 from kafka import KafkaProducer
 
-from ChatModel import ChatModel
+from common.model.ChatModel import ChatModel
 
 
 def produce_chat(
     video_id: str, expire_datetime: datetime, broker_host: str, topic: str
 ):
     """
-    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
-    :param topic: 카프카 토픽
     :param video_id: 네이버 페이지 아이디 (https://www.youtube.com/watch?v={video_id})
     :param expire_datetime: 클롤링을 중단할 시각
+    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
+    :param topic: 카프카 토픽
     """
     producer = KafkaProducer(
         bootstrap_servers=broker_host,
@@ -34,7 +34,8 @@ def produce_chat(
             producer.send(topic, value=chat)
 
             print(
-                f"Sent: [{c.datetime}]-[{c.author.name}]-[{c.message}] to topic: {topic}"
+                f"""Sent: [{
+                    c.datetime}]-[{c.author.name}]-[{c.message}] to topic: {topic}"""
             )
     producer.close()
 

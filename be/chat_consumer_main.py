@@ -1,9 +1,41 @@
+from datetime import datetime, timedelta
 import json
 
 from common.model import ChatModel
 from common.mongodb.client import db
 from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaConsumer
+
+
+def process_statistic(chat: ChatModel):
+    now = datetime.now()
+
+    TIME_INTERVAL_MINUTE = 5
+
+    time = now.replace(second=0, microsecond=0)
+    time -= timedelta(minutes=now.minute % TIME_INTERVAL_MINUTE)
+
+    source_id = chat["source_id"]
+    source_type = chat["source_type"]
+
+    query = {
+        "time": time,
+        "source_id": source_id,
+        "source_type": source_type,
+    }
+
+    chat_statistic = db.chat_statistic.find_one(query)
+    if chat_statistic is None:
+        chat_statistic = {
+            "time": time,
+            "source_id": source_id,
+            "source_type": source_type,
+            "count": 0,
+        }
+    chat_statistic["count"] += 1
+
+    db.chat_statistic.update_one(
+        query, {"$set": chat_statistic}, upsert=True)
 
 
 def consume_chat(broker_host: str, topic: str):
@@ -32,6 +64,7 @@ def consume_chat(broker_host: str, topic: str):
             )
 
             db.chat.insert_one(chat)
+            process_statistic(chat)
 
     except KeyboardInterrupt:
         print("Consumer stopped.")

@@ -1,19 +1,27 @@
 from datetime import datetime, timedelta
 import json
 
-from common.model import ChatModel
-from common.mongodb.client import db
-from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaConsumer
+
+from common.kafka.dto.chat_message import ChatMessage
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
+from common.mongodb.client import db
+from common.model.chat_model import ChatModel
+
+
+TIME_INTERVAL_MINUTE = 5
+
+
+def get_interval_start_time() -> datetime:
+    now = datetime.now()
+    time = now.replace(second=0, microsecond=0)
+    time -= timedelta(minutes=now.minute % TIME_INTERVAL_MINUTE)
+
+    return time
 
 
 def process_statistic(chat: ChatModel):
-    now = datetime.now()
-
-    TIME_INTERVAL_MINUTE = 5
-
-    time = now.replace(second=0, microsecond=0)
-    time -= timedelta(minutes=now.minute % TIME_INTERVAL_MINUTE)
+    time = get_interval_start_time()
 
     source_id = chat["source_id"]
     source_type = chat["source_type"]
@@ -56,7 +64,7 @@ def consume_chat(broker_host: str, topic: str):
     # 메시지 소비
     try:
         for record in consumer:
-            chat: ChatModel = record.value
+            chat: ChatMessage = record.value
             time, author, message = chat["time"], chat["author"], chat["message"]
 
             print(

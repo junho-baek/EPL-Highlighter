@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 @dataclass
-class ChatModel:
+class ChatMessage:
     source_id: str
     source_type: str
     time: datetime | str

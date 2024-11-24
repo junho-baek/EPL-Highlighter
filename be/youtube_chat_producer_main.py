@@ -2,11 +2,10 @@ import dataclasses
 import json
 from datetime import datetime, timedelta
 
+from common.kafka.dto.chat_message import ChatMessage
 from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 import pytchat
 from kafka import KafkaProducer
-
-from common.model.ChatModel import ChatModel
 
 
 def produce_chat(
@@ -28,7 +27,7 @@ def produce_chat(
 
     while chat_crawler.is_alive() and datetime.now() < expire_datetime:
         for c in chat_crawler.get().sync_items():
-            chat: ChatModel = ChatModel(
+            chat: ChatMessage = ChatMessage(
                 source_id=video_id,
                 source_type="youtube",
                 time=c.datetime,

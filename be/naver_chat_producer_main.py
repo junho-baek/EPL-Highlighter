@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Generator
 
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaProducer
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -12,15 +13,15 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-from ChatModel import ChatModel
+from common.model.ChatModel import ChatModel
 
 
 def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topic: str):
     """
-    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
-    :param topic: 카프카 토픽
     :param page_id: 네이버 페이지 아이디 (https://m.sports.naver.com/game/{page_id}/cheer)
     :param expire_datetime: 클롤링을 중단할 시각
+    :param broker_host:  카프카 호스트 docker-compse.yml 에 나와있듯 localhost:19092 (변동가능)
+    :param topic: 카프카 토픽
     """
     producer = KafkaProducer(
         bootstrap_servers=broker_host,
@@ -33,7 +34,8 @@ def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topi
             break
         producer.send(topic, value=comment)
         print(
-            f"Sent: [{comment.time}]-[{comment.author}]-[{comment.message}] to topic: {topic}"
+            f"""Sent: [{
+                comment.time}]-[{comment.author}]-[{comment.message}] to topic: {topic}"""
         )
     producer.close()
 
@@ -72,7 +74,8 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
             content = comment_element.find_element(
                 By.CSS_SELECTOR, ".u_cbox_contents"
             ).text
-            author = comment_element.find_element(By.CSS_SELECTOR, ".u_cbox_name").text
+            author = comment_element.find_element(
+                By.CSS_SELECTOR, ".u_cbox_name").text
             time_posted = comment_element.find_element(
                 By.CSS_SELECTOR, ".u_cbox_date"
             ).get_attribute("data-value")
@@ -84,7 +87,8 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
     while True:
         try:
             # JavaScript에서 저장한 새로운 댓글 데이터 가져오기
-            new_comments = driver.execute_script("return window.newComments || [];")
+            new_comments = driver.execute_script(
+                "return window.newComments || [];")
 
             print(f"new_comments length: {len(new_comments)}")
 
@@ -142,6 +146,6 @@ if __name__ == "__main__":
     produce_chat(
         "2024112463551271679",
         datetime.now() + timedelta(days=3),
-        "localhost:19092",
-        "epl",
+        KAFKA_BROKER,
+        EPL_TOPIC_NAME,
     )

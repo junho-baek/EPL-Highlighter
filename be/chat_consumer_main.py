@@ -1,11 +1,7 @@
 import json
 
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaConsumer
-
-# Kafka 브로커 주소
-# 토픽 이름
-BROKER = "localhost:19092"
-TOPIC = "test-topic"
 
 
 def consume_chat(broker_host: str, topic: str):
@@ -28,7 +24,8 @@ def consume_chat(broker_host: str, topic: str):
         for record in consumer:
             chat = record.value
             print(
-                f"Sent: [{chat['time']}]-[{chat['author']}]-[{chat['message']}] to topic: {topic}"
+                f"""Sent: [{chat['time']}]-[{chat['author']
+                                             }]-[{chat['message']}] to topic: {topic}"""
             )
     except KeyboardInterrupt:
         print("Consumer stopped.")
@@ -37,4 +34,4 @@ def consume_chat(broker_host: str, topic: str):
 
 
 if __name__ == "__main__":
-    consume_chat("localhost:19092", "epl")
+    consume_chat(KAFKA_BROKER, EPL_TOPIC_NAME)

@@ -14,6 +14,7 @@ jupyter = "*"
 webdriver-manager = "*"
 kafka-python = "*"
 pytchat = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "3.9"

@@ -29,7 +29,11 @@ def produce_chat(
     while chat_crawler.is_alive() and datetime.now() < expire_datetime:
         for c in chat_crawler.get().sync_items():
             chat: ChatModel = ChatModel(
-                time=c.datetime, author=c.author.name, message=c.message
+                source_id=video_id,
+                source_type="youtube",
+                time=c.datetime,
+                author=c.author.name,
+                message=c.message
             )
 
             producer.send(topic, value=chat)

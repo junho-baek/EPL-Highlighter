@@ -1,5 +1,6 @@
 import dataclasses
 import json
+import multiprocessing
 import time
 from datetime import datetime, timedelta
 from typing import Generator
@@ -79,7 +80,12 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
             time_posted = comment_element.find_element(
                 By.CSS_SELECTOR, ".u_cbox_date"
             ).get_attribute("data-value")
-            yield ChatModel(time=time_posted, message=content, author=author)
+            yield ChatModel(
+                source_id=page_id,
+                source_type="naver",
+                time=time_posted,
+                message=content,
+                author=author)
         except Exception as e:
             print(f"댓글 파싱 중 오류 발생: {str(e)}")
 
@@ -96,8 +102,11 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
                 # 새로운 댓글 처리 후 배열 비우기
                 driver.execute_script("window.newComments = [];")
                 for comment in new_comments:
-                    print("\n새로운 댓글이 추가되었습니다!")
+                    print("새로운 댓글이 추가되었습니다!")
+                    print(comment)
                     yield ChatModel(
+                        source_id=page_id,
+                        source_type="naver",
                         time=comment["time"],
                         message=comment["content"],
                         author=comment["author"],
@@ -142,10 +151,29 @@ const observer = new MutationObserver(callback);
 observer.observe(targetNode, config);
 """
 
-if __name__ == "__main__":
-    produce_chat(
-        "2024112463551271679",
+
+def target1():
+    return produce_chat(
+        "20241124021F64",
         datetime.now() + timedelta(days=3),
         KAFKA_BROKER,
         EPL_TOPIC_NAME,
     )
+
+
+def target2():
+    return produce_chat(
+        "202411240450125",
+        datetime.now() + timedelta(days=3),
+        KAFKA_BROKER,
+        EPL_TOPIC_NAME,
+    )
+
+
+if __name__ == "__main__":
+
+    p1 = multiprocessing.Process(target=target1)
+    p1.start()
+
+    p2 = multiprocessing.Process(target=target2)
+    p2.start()

@@ -151,29 +151,11 @@ const observer = new MutationObserver(callback);
 observer.observe(targetNode, config);
 """
 
-
-def target1():
-    return produce_chat(
-        "20241124021F64",
-        datetime.now() + timedelta(days=3),
-        KAFKA_BROKER,
-        EPL_TOPIC_NAME,
-    )
-
-
-def target2():
-    return produce_chat(
-        "202411240450125",
-        datetime.now() + timedelta(days=3),
-        KAFKA_BROKER,
-        EPL_TOPIC_NAME,
-    )
-
-
 if __name__ == "__main__":
-
-    p1 = multiprocessing.Process(target=target1)
-    p1.start()
-
-    p2 = multiprocessing.Process(target=target2)
-    p2.start()
+    for page_id in ("20241124021F64", "202411240450125"):
+        p = multiprocessing.Process(
+            target=produce_chat,
+            args=(page_id, datetime.now() + timedelta(days=3),
+                  KAFKA_BROKER, EPL_TOPIC_NAME),
+        )
+        p.start()

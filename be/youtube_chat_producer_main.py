@@ -2,6 +2,7 @@ import dataclasses
 import json
 from datetime import datetime, timedelta
 
+from be.common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 import pytchat
 from kafka import KafkaProducer
 
@@ -42,5 +43,5 @@ def produce_chat(
 
 if __name__ == "__main__":
     produce_chat(
-        "FN-wSx3ryg0", datetime.now() + timedelta(days=3), "localhost:19092", "epl"
+        "FN-wSx3ryg0", datetime.now() + timedelta(days=3), KAFKA_BROKER, EPL_TOPIC_NAME
     )

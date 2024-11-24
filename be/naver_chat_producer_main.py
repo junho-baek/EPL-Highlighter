@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Generator
 
+from be.common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaProducer
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -145,6 +146,6 @@ if __name__ == "__main__":
     produce_chat(
         "2024112463551271679",
         datetime.now() + timedelta(days=3),
-        "localhost:19092",
-        "epl",
+        KAFKA_BROKER,
+        EPL_TOPIC_NAME,
     )

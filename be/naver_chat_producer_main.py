@@ -5,6 +5,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Generator
 
+from common.kafka.dto.chat_message import ChatMessage
 from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaProducer
 from selenium import webdriver
@@ -13,8 +14,6 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-
-from common.model.ChatModel import ChatModel
 
 
 def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topic: str):
@@ -56,7 +55,7 @@ def get_web_driver() -> WebDriver:
     )
 
 
-def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None, None]:
+def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatMessage, None, None]:
     """
     :param page_id: 네이버 페이지 아이디 (https://m.sports.naver.com/game/{page_id}/cheer)
     """
@@ -80,7 +79,7 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
             time_posted = comment_element.find_element(
                 By.CSS_SELECTOR, ".u_cbox_date"
             ).get_attribute("data-value")
-            yield ChatModel(
+            yield ChatMessage(
                 source_id=page_id,
                 source_type="naver",
                 time=time_posted,
@@ -104,7 +103,7 @@ def crawl_comment(page_id: str, driver: WebDriver) -> Generator[ChatModel, None,
                 for comment in new_comments:
                     print("새로운 댓글이 추가되었습니다!")
                     print(comment)
-                    yield ChatModel(
+                    yield ChatMessage(
                         source_id=page_id,
                         source_type="naver",
                         time=comment["time"],

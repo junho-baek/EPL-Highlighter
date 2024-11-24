@@ -11,3 +11,5 @@ class ChatModel:
     time: datetime | str
     message: str
     author: str
+    interval_start_time: datetime
+    interval_end_time: datetime

@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 
 from game_schedule.service import ScheduleService
 

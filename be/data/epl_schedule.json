@@ -203,7 +203,7 @@
     {
       "date": "2024-11-23",
       "time": "21:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "레스터 시티",
       "away_team": "첼시",
       "league": "EPL",
@@ -213,7 +213,7 @@
     {
       "date": "2024-11-24",
       "time": "00:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "본머스",
       "away_team": "브라이턴",
       "league": "EPL",
@@ -223,7 +223,7 @@
     {
       "date": "2024-11-24",
       "time": "00:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "아스널",
       "away_team": "노팅엄",
       "league": "EPL",
@@ -233,7 +233,7 @@
     {
       "date": "2024-11-24",
       "time": "00:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "애스턴 빌라",
       "away_team": "팰리스",
       "league": "EPL",
@@ -243,7 +243,7 @@
     {
       "date": "2024-11-24",
       "time": "00:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "에버턴",
       "away_team": "브렌트퍼드",
       "league": "EPL",
@@ -253,7 +253,7 @@
     {
       "date": "2024-11-24",
       "time": "00:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "풀럼",
       "away_team": "울버햄턴",
       "league": "EPL",
@@ -263,7 +263,7 @@
     {
       "date": "2024-11-24",
       "time": "02:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "맨시티",
       "away_team": "토트넘",
       "league": "EPL",

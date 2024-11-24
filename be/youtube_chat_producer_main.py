@@ -2,7 +2,7 @@ import dataclasses
 import json
 from datetime import datetime, timedelta
 
-from be.common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 import pytchat
 from kafka import KafkaProducer
 

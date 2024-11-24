@@ -1,6 +1,6 @@
 import json
 
-from be.common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaConsumer
 
 
@@ -24,8 +24,8 @@ def consume_chat(broker_host: str, topic: str):
         for record in consumer:
             chat = record.value
             print(
-                f"Sent: [{chat['time']}]-[{chat['author']
-                                           }]-[{chat['message']}] to topic: {topic}"
+                f"""Sent: [{chat['time']}]-[{chat['author']
+                                             }]-[{chat['message']}] to topic: {topic}"""
             )
     except KeyboardInterrupt:
         print("Consumer stopped.")

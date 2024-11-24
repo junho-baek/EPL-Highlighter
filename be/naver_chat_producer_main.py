@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timedelta
 from typing import Generator
 
-from be.common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
+from common.kafka.config import EPL_TOPIC_NAME, KAFKA_BROKER
 from kafka import KafkaProducer
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options

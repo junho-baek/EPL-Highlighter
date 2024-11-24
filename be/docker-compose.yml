@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   zookeeper:
@@ -22,7 +22,16 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker:9092, EXTERNAL://localhost:19092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
 
-
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  mysql:
+    image: "mysql:latest"
+    environment:
+      - "MYSQL_DATABASE=mydatabase"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_ROOT_PASSWORD=verysecret"
+      - "MYSQL_USER=myuser"
+    ports:
+      - "13306:3306"

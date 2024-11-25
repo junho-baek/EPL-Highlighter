@@ -18,8 +18,8 @@ async def main():
     """
     reference: https://github.com/agronholm/apscheduler/blob/3.x/examples/schedulers/asyncio_.py
     """
-    # every 10 minute
-    trigger = CronTrigger(minute="*/10")
+    # Run at 00:00 on the first day of each month
+    trigger = CronTrigger(day="1", hour="0", minute="0")
 
     scheduler = AsyncIOScheduler()
     scheduler.add_job(update_game_schedule  , trigger=trigger)

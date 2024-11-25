@@ -3,6 +3,7 @@ import tw from "tailwind-styled-components";
 import Layout from "../components/Layout";
 import { useParams, useLocation, Link } from "react-router-dom";
 import { reactions } from "../mockData";
+import { SPORTS } from "../constants/sports";
 
 const PageTitle = tw.h1`
   text-4xl font-bold text-blue-600 mb-6
@@ -56,7 +57,7 @@ const ToggleButton = tw.button`
 function Live() {
   const { gameId } = useParams();
   const location = useLocation();
-  const [filter, setFilter] = useState("EPL");
+  const [filter, setFilter] = useState(SPORTS.EPL.id);
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -164,18 +165,16 @@ function Live() {
       <PageTitle>오늘의 실시간 반응</PageTitle>
 
       <div className="flex gap-4 mb-6">
-        <ToggleButton
-          $isActive={filter === "EPL"}
-          onClick={() => setFilter("EPL")}
-        >
-          EPL
-        </ToggleButton>
-        <ToggleButton
-          $isActive={filter === "NBA"}
-          onClick={() => setFilter("NBA")}
-        >
-          NBA
-        </ToggleButton>
+        {Object.values(SPORTS).map((sport) => (
+          <ToggleButton
+            key={sport.id}
+            $isActive={filter === sport.id}
+            onClick={() => setFilter(sport.id)}
+            className={`${sport.color} text-white`}
+          >
+            {sport.name}
+          </ToggleButton>
+        ))}
       </div>
 
       <MatchListContainer>

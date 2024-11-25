@@ -221,6 +221,15 @@ function Home() {
         >
           NBA
         </ToggleButton>
+        <ToggleButton
+          $isActive={filter === "WKOVO"}
+          onClick={() => {
+            setFilter("WKOVO");
+            setCurrentPage(0);
+          }}
+        >
+          여자배구
+        </ToggleButton>
       </div>
 
       {currentDates.map((date) => (

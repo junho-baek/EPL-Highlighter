@@ -26,7 +26,11 @@ class ScheduleService:
             current_year = today.year
 
             # 스포츠 종목에 따른 URL 구조 설정
-            sport_type = "wfootball" if category == "epl" else "basketball"
+            sport_type = {
+                "epl": "wfootball",
+                "nba": "basketball",
+                "wkovo": "volleyball"  # 여자배구 추가
+            }.get(category, "wfootball")
 
             for i in range(6):
                 target_month = (current_month + i) % 12 or 12

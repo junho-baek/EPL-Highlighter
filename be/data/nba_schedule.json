@@ -1703,7 +1703,7 @@
     {
       "date": "2024-11-23",
       "time": "07:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "뉴욕",
       "away_team": "유타",
       "league": "NBA",
@@ -1713,7 +1713,7 @@
     {
       "date": "2024-11-23",
       "time": "09:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "디트로이트",
       "away_team": "올랜도",
       "league": "NBA",
@@ -1723,7 +1723,7 @@
     {
       "date": "2024-11-23",
       "time": "10:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "멤피스",
       "away_team": "시카고",
       "league": "NBA",
@@ -1733,7 +1733,7 @@
     {
       "date": "2024-11-23",
       "time": "10:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "포틀랜드",
       "away_team": "휴스턴",
       "league": "NBA",
@@ -1743,7 +1743,7 @@
     {
       "date": "2024-11-23",
       "time": "10:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "샬럿",
       "away_team": "밀워키",
       "league": "NBA",
@@ -1753,7 +1753,7 @@
     {
       "date": "2024-11-23",
       "time": "10:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "골든스테이트",
       "away_team": "샌안토니오",
       "league": "NBA",
@@ -1763,7 +1763,7 @@
     {
       "date": "2024-11-23",
       "time": "12:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "덴버",
       "away_team": "LA레이커스",
       "league": "NBA",
@@ -1773,7 +1773,7 @@
     {
       "date": "2024-11-24",
       "time": "05:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "미네소타",
       "away_team": "보스턴",
       "league": "NBA",
@@ -1783,7 +1783,7 @@
     {
       "date": "2024-11-24",
       "time": "07:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "워싱턴",
       "away_team": "인디애나",
       "league": "NBA",
@@ -1793,7 +1793,7 @@
     {
       "date": "2024-11-24",
       "time": "08:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "댈러스",
       "away_team": "마이애미",
       "league": "NBA",
@@ -1803,7 +1803,7 @@
     {
       "date": "2024-11-24",
       "time": "08:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "LA클리퍼스",
       "away_team": "필라델피아",
       "league": "NBA",
@@ -1813,7 +1813,7 @@
     {
       "date": "2024-11-24",
       "time": "09:30",
-      "status": "예정",
+      "status": "종료",
       "home_team": "토론토",
       "away_team": "클리블랜드",
       "league": "NBA",
@@ -1823,7 +1823,7 @@
     {
       "date": "2024-11-24",
       "time": "11:00",
-      "status": "예정",
+      "status": "종료",
       "home_team": "브루클린",
       "away_team": "새크라멘토",
       "league": "NBA",
@@ -2434,16 +2434,6 @@
       "date": "2024-12-03",
       "time": "09:30",
       "status": "예정",
-      "home_team": "멤피스",
-      "away_team": "댈러스",
-      "league": "NBA",
-      "cheer_url": "https://m.sports.naver.com/game/2024120306/cheer",
-      "timestamp": "2024-12-03T09:30:00+09:00"
-    },
-    {
-      "date": "2024-12-03",
-      "time": "09:30",
-      "status": "예정",
       "home_team": "올랜도",
       "away_team": "뉴욕",
       "league": "NBA",
@@ -2469,6 +2459,16 @@
       "league": "NBA",
       "cheer_url": "https://m.sports.naver.com/game/2024120325/cheer",
       "timestamp": "2024-12-03T10:00:00+09:00"
+    },
+    {
+      "date": "2024-12-03",
+      "time": "10:30",
+      "status": "예정",
+      "home_team": "멤피스",
+      "away_team": "댈러스",
+      "league": "NBA",
+      "cheer_url": "https://m.sports.naver.com/game/2024120306/cheer",
+      "timestamp": "2024-12-03T10:30:00+09:00"
     },
     {
       "date": "2024-12-03",

@@ -16,6 +16,11 @@ kafka-python = "*"
 pytchat = "*"
 apscheduler = "*"
 pymongo = "*"
+python-socketio = "*"
+python-engineio = "*"
+aiohttp = "*"
+aiokafka = "*"
+motor = "*"
 
 [requires]
 python_version = "3.9"

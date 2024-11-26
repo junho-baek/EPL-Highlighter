@@ -25,14 +25,19 @@ def produce_chat(page_id: str, expire_datetime: datetime, broker_host: str, topi
     """
     producer = KafkaProducer(
         bootstrap_servers=broker_host,
-        value_serializer=lambda chat_model: json.dumps(
-            dataclasses.asdict(chat_model)
-        ).encode("utf-8"),
+        value_serializer=lambda x: json.dumps(x.to_dict()).encode('utf-8')
     )
     for comment in crawl_comment(page_id, get_web_driver()):
         if expire_datetime < datetime.now():
             break
-        producer.send(topic, value=comment)
+        chat = ChatMessage(
+            source_id=page_id,
+            source_type="naver",
+            time=comment.time,
+            author=comment.author,
+            message=comment.message
+        )
+        producer.send(topic, value=chat)
         print(
             f"""Sent: [{
                 comment.time}]-[{comment.author}]-[{comment.message}] to topic: {topic}"""
@@ -151,7 +156,7 @@ observer.observe(targetNode, config);
 """
 
 if __name__ == "__main__":
-    for page_id in ("20241124021F64", "202411240450125"):
+    for page_id in ("2024112414", "2024112510050850197"):
         p = multiprocessing.Process(
             target=produce_chat,
             args=(page_id, datetime.now() + timedelta(days=3),

@@ -35,3 +35,13 @@ cd be
 docker compose up -d
 pipenv run python game_schedule_scheduler_main.py
 ```
+
+## Socket.IO
+
+- 실시간 반응 페이지에서 사용
+- 경기 시작 시 실시간 반응 페이지에서 경기 정보 받아옴
+- 경기 중 대화 발생 시 실시간 반응 페이지에 메시지 받아옴
+
+```
+kill -9 $(lsof -t -i:8000)
+```

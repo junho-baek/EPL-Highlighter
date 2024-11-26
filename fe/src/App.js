@@ -14,6 +14,7 @@ function App() {
           <Route path="/live" element={<Live />} />
           <Route path="/live/:gameId" element={<Live />} />
           <Route path="/highlight" element={<Highlight />} />
+          <Route path="/highlight/:gameId" element={<Highlight />} />
         </Routes>
       </Router>
     </ThemeProvider>

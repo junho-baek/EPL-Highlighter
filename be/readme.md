@@ -20,7 +20,7 @@ docker compose up -d
 pipenv run python naver_chat_producer_main.py
 pipenv run python youtube_chat_producer_main.py
 pipenv run python chat_consumer_main.py
-
+pipenv run python game_schedule_scheduler_main.py
 작동하는 것 확인 후..
 
 docker compose down -v

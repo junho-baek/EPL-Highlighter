@@ -46,6 +46,7 @@ const ChatMessages = tw.div`
   ${(p) =>
     p.$isDark ? "bg-gray-900 border-gray-600" : "bg-gray-100 border-blue-200"}
   lg:flex-1 lg:h-[500px]
+  flex flex-col
 `;
 
 const ToggleButton = tw.button`
@@ -67,6 +68,15 @@ function Live() {
   const [messages, setMessages] = useState([]);
   const socket = useRef(null);
   const { isDark } = useTheme();
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   useEffect(() => {
     if (!gameId) {
@@ -99,7 +109,7 @@ function Live() {
 
   useEffect(() => {
     if (gameId) {
-      const fetchReactionData = async () => {
+      const fetchReactions = async () => {
         try {
           setLoading(true);
           const response = await fetch(
@@ -108,6 +118,7 @@ function Live() {
           if (!response.ok) throw new Error("Failed to fetch reactions");
           const data = await response.json();
           setReactionData(data);
+          setMessages(data.messages || []);
         } catch (err) {
           setError(err.message);
         } finally {
@@ -115,16 +126,16 @@ function Live() {
         }
       };
 
-      fetchReactionData();
+      fetchReactions();
     }
   }, [gameId]);
 
   useEffect(() => {
     if (gameId) {
-      console.log("Connecting to socket with gameId:", gameId);
       socket.current = io("http://localhost:8000", {
+        path: "/socket.io",
         transports: ["websocket"],
-        upgrade: false,
+        withCredentials: true,
       });
 
       socket.current.on("connect", () => {
@@ -133,17 +144,55 @@ function Live() {
       });
 
       socket.current.on("chat", (message) => {
-        console.log("Received chat message:", message);
+        console.log("Received message:", message);
         setMessages((prev) => [...prev, message]);
-      });
 
-      socket.current.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
+        // 반응량 데이터 업데이트
+        setReactionData((prev) => {
+          if (!prev) return prev;
+
+          const time = new Date(message.time.replace("+0900", ""));
+          const bucket = new Date(time);
+          bucket.setMinutes(
+            bucket.getMinutes() - (bucket.getMinutes() % 2),
+            0,
+            0
+          );
+          const bucketStr = bucket.toISOString();
+
+          // 기존 반응이 있으면 업데이트, 없으면 새로 추가
+          const existingReactionIndex = prev.reactions.findIndex(
+            (r) => r.time === bucketStr
+          );
+
+          if (existingReactionIndex >= 0) {
+            // 기존 시간대 업데이트
+            const updatedReactions = [...prev.reactions];
+            updatedReactions[existingReactionIndex] = {
+              ...updatedReactions[existingReactionIndex],
+              count: updatedReactions[existingReactionIndex].count + 1,
+            };
+            return {
+              ...prev,
+              reactions: updatedReactions,
+            };
+          } else {
+            // 새 시간대 추가
+            return {
+              ...prev,
+              reactions: [
+                ...prev.reactions,
+                { time: bucketStr, count: 1 },
+              ].sort((a, b) => new Date(a.time) - new Date(b.time)),
+            };
+          }
+        });
       });
 
       return () => {
-        console.log("Disconnecting socket");
-        socket.current.disconnect();
+        if (socket.current) {
+          socket.current.disconnect();
+        }
       };
     }
   }, [gameId]);
@@ -165,12 +214,21 @@ function Live() {
   if (gameId) {
     return (
       <Layout>
-        <PageTitle>
-          실시간 반응 -{" "}
-          {location.state?.matchInfo
-            ? `${location.state.matchInfo.time} ${location.state.matchInfo.home_team} vs ${location.state.matchInfo.away_team}`
-            : "경기 정보 로딩중..."}
-        </PageTitle>
+        <div className="flex justify-between items-center w-full max-w-7xl mx-auto px-4 mb-4">
+          <PageTitle>
+            실시간 반응 -{" "}
+            {location.state?.matchInfo
+              ? `${location.state.matchInfo.time} ${location.state.matchInfo.home_team} vs ${location.state.matchInfo.away_team}`
+              : "경기 정보 로딩중..."}
+          </PageTitle>
+          <Link
+            to={`/highlight/${gameId}`}
+            state={{ matchInfo: location.state?.matchInfo }}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            하이라이트 보기
+          </Link>
+        </div>
         <ReactionContainer>
           <ReactionList $isDark={isDark}>
             <h2 className="text-lg font-semibold mb-3 dark:text-white">
@@ -190,37 +248,38 @@ function Live() {
                   )}
                   부터
                 </div>
-                {reactionData.reactions.map((reaction, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between mb-2"
-                  >
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      {new Date(reaction.time).toLocaleTimeString("ko-KR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                    <div className="flex-1 mx-4">
-                      <div
-                        className="bg-blue-500 dark:bg-blue-400 h-4 rounded"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            (reaction.count /
-                              Math.max(
-                                ...reactionData.reactions.map((r) => r.count)
-                              )) *
+                {reactionData.reactions
+                  .filter((reaction) => reaction.count > 0)
+                  .map((reaction, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between mb-2"
+                    >
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {new Date(reaction.time).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                      <div className="flex-1 mx-4">
+                        <div
+                          className="bg-blue-500 dark:bg-blue-400 h-4 rounded"
+                          style={{
+                            width: `${
+                              (reaction.count /
+                                Math.max(
+                                  ...reactionData.reactions.map((r) => r.count)
+                                )) *
                               100
-                          )}%`,
-                        }}
-                      />
+                            }%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                        {reaction.count}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                      {reaction.count}
-                    </span>
-                  </div>
-                ))}
+                  ))}
               </>
             ) : (
               <div className="text-center text-gray-500 dark:text-gray-400">
@@ -230,15 +289,40 @@ function Live() {
           </ReactionList>
           <ChatMessages $isDark={isDark}>
             <h2 className="text-lg font-semibold mb-3 dark:text-white">
-              메시지
+              채팅 메시지
             </h2>
-            {messages.map((message, index) => (
-              <p key={index} className="text-gray-700 dark:text-gray-200 mb-2">
-                {`[${message.source_type === "naver" ? "네이버" : "유튜브"}] [${
-                  message.author
-                }] ${message.message}`}
-              </p>
-            ))}
+            <div className="space-y-2">
+              {messages.map((msg, index) => (
+                <div
+                  key={`${msg.time}-${msg.author}-${index}`}
+                  className={`p-2 rounded ${
+                    isDark ? "bg-gray-800" : "bg-gray-100"
+                  }`}
+                >
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>{msg.author}</span>
+                    <span>
+                      {msg.time
+                        ? new Date(
+                            msg.time.replace("+0900", "")
+                          ).toLocaleString("ko-KR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            timeZone: "Asia/Seoul",
+                          })
+                        : "시간 정보 없음"}
+                    </span>
+                  </div>
+                  <div
+                    className={`mt-1 ${isDark ? "text-white" : "text-black"}`}
+                  >
+                    {msg.message}
+                  </div>
+                </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
           </ChatMessages>
         </ReactionContainer>
       </Layout>

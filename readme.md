@@ -19,6 +19,20 @@ pipenv install
 uvicorn main:app --reload
 ```
 
+### 실행법
+
+```
+cd be
+docker compose up -d
+pipenv run python naver_chat_producer_main.py
+pipenv run python youtube_chat_producer_main.py
+pipenv run python chat_consumer_main.py
+
+작동하는 것 확인 후..
+
+docker compose down -v
+```
+
 ## **프로젝트 개요**
 
 커뮤니티 데이터, 유튜브 실시간 스트리밍 데이터를 기반으로 실시간 반응을 수집하고 분석하여 하이라이트 구간을 탐지하고 요약 정보를 제공하는 시스템.
